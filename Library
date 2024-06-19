@@ -1,0 +1,146 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Library {
+    private List<Book> books;
+
+    public Library() {
+        books = new ArrayList<>();
+    }
+
+    public void addBook(Book book) {
+        books.add(book);
+    }
+
+    public void listBooks() {
+        for (Book book : books) {
+            System.out.println(book);
+        }
+    }
+
+    public void borrowBook(String title) {
+        for (Book book : books) {
+            if (book.getTitle().equalsIgnoreCase(title) && book.isAvailable()) {
+                book.borrowBook();
+                System.out.println("You borrowed \"" + title + "\"");
+                return;
+            }
+        }
+        System.out.println("Book not available for borrowing.");
+    }
+
+    public void returnBook(String title) {
+        for (Book book : books) {
+            if (book.getTitle().equalsIgnoreCase(title) && !book.isAvailable()) {
+                book.returnBook();
+                System.out.println("You returned \"" + title + "\"");
+                return;
+            }
+        }
+        System.out.println("Book not found in the system.");
+    }
+
+    public void inventory() {
+        int availableCount = 0;
+        int borrowedCount = 0;
+
+        for (Book book : books) {
+            if (book.isAvailable()) {
+                availableCount++;
+            } else {
+                borrowedCount++;
+            }
+        }
+
+        System.out.println("Inventory:");
+        System.out.println("Available books: " + availableCount);
+        System.out.println("Borrowed books: " + borrowedCount);
+    }
+
+    public static void main(String[] args) {
+        Library library = new Library();
+        library.addBook(new Book("To Kill a Mockingbird", "Harper Lee"));
+        library.addBook(new Book("1984", "George Orwell"));
+        library.addBook(new Book("The Great Gatsby", "F. Scott Fitzgerald"));
+
+        Scanner scanner = new Scanner(System.in);
+        boolean running = true;
+
+        while (running) {
+            System.out.println("Library Menu:");
+            System.out.println("1. List all books");
+            System.out.println("2. Borrow a book");
+            System.out.println("3. Return a book");
+            System.out.println("4. View inventory");
+            System.out.println("5. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // Consume newline
+
+            switch (choice) {
+                case 1:
+                    library.listBooks();
+                    break;
+                case 2:
+                    System.out.print("Enter the title of the book to borrow: ");
+                    String borrowTitle = scanner.nextLine();
+                    library.borrowBook(borrowTitle);
+                    break;
+                case 3:
+                    System.out.print("Enter the title of the book to return: ");
+                    String returnTitle = scanner.nextLine();
+                    library.returnBook(returnTitle);
+                    break;
+                case 4:
+                    library.inventory();
+                    break;
+                case 5:
+                    running = false;
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+            System.out.println();
+        }
+
+        scanner.close();
+    }
+}
+
+class Book {
+    private String title;
+    private String author;
+    private boolean isAvailable;
+
+    public Book(String title, String author) {
+        this.title = title;
+        this.author = author;
+        this.isAvailable = true;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void borrowBook() {
+        isAvailable = false;
+    }
+
+    public void returnBook() {
+        isAvailable = true;
+    }
+
+    @Override
+    public String toString() {
+        return "Title: " + title + ", Author: " + author + ", Available: " + isAvailable;
+    }
+}
